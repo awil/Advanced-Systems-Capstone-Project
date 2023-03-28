@@ -1,0 +1,78 @@
+:root {
+    color-scheme: light dark;
+  
+    --font: 'Open Sans';
+    /** Main Color Scheme **/
+    --logo-w: 254px;
+    --logo-h: 135px;
+    --logo: rgb(114, 118, 120);
+    --primary: rgb(114, 118, 120);
+    --secondary: rgb(255, 165, 31);
+    --bs-navbar-color: rgb(255, 165, 31);
+    --site-bg: #ffffff;
+    --site-bg-dk: rgb(37, 37, 37);
+    --site-menu-dk: rgb(53, 53, 53);
+  
+    --error-color: #a5211f;
+    --error-color-dk: #da302d;
+    --white: #ffffff;
+    --black: #000000;
+  
+    /** UI Form Colors **/
+    --login-border-accent: #d7dadc;
+    --btn-primary: #ffa51f;
+    --btn-secondary: #ffffff;
+    --btn-pri-col: #4a545b;
+    --btn-sec-col: #4a545b;
+    --btn-pri-col-hov: #ffffff;
+    --btn-sec-col-hov: #ffffff;
+    --btn-sec-bg-hov: #474a4c;
+    
+      /** UI Form Colors - Dark Mode **/
+      --btn-pri-dk: #ffa51f;
+      --btn-sec-dk: #252525;
+      --btn-pri-col-dk: #252525;
+      --btn-sec-col-dk: #81898f;
+      --btn-pri-col-hov-dk: #ffffff;
+      --btn-sec-col-hov-dk: #252525;
+      --btn-sec-bg-hov-dk: #81898f;
+      --select-bg: #e7e7e7;
+      --select-bg-dk: #4a545b;
+  
+      /** UI Line Accents **/
+    --nav-accent-border: #4a545b;
+    --pri-table-border: #aeb6bb;
+    --pri-table-altrow: #f0f0f0;
+    --nav-accent-border-dk: #a4a6a8;
+    --pri-table-border-dk: #a4a6a8;
+    --pri-table-altrow-dk: #474a4c;
+  
+    --nav-btn-color: #4a545b;
+    --nav-btn-hov-color: #474a4c;
+  
+    --nav-btn-color-dk: #4a545b;
+    --nav-btn-hov-color-dk: #474a4c;
+  
+    /** Typography **/
+    --link-light: #4c6faf;
+    --link-light-hov: #20417e;
+    --heading: #4a545b;
+    --heading-sub: #4a545b;
+    --body-p: #4a545b;
+      /** Typography - Dark Mode **/
+      --link-dk: #7089b8;
+      --link-dk-hov: #96abd1;
+      --heading-dk: #a4a6a8;
+      --heading-sub-dk: #a4a6a8;
+      --body-p-dk: #a4a6a8;
+  
+  }
+
+.bd-navbar::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: block;
+    content: "";
+    background-image: linear-gradient(rgba(var(--site-bg-dk), 1), rgba(var(--site-menu-dk), 0.95));
+}
