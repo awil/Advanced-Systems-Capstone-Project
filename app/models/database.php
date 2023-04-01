@@ -28,17 +28,10 @@ class Database {
                                     self::$options);
                 
             } catch (PDOException $e) {
-                self::displayError($e->getMessage());
+                displayDatabaseError($e->getMessage());
             }
         }
         return self::$db;
-    }
-
-    // Display errors
-    public function displayError($error_message) {
-        global $app_path;
-        include 'errors/db_error.php';
-        exit;
     }
 
     // Start a prepared statement

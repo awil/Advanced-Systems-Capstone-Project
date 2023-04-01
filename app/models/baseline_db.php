@@ -56,7 +56,7 @@ function save_baseline($clientctrls) {
             $ct_sel = "Not_Applicable";
         }
 
-        $sql = "INSERT INTO savedbaselines (bl_id, bl_cl_id, bl_ctrl_id, bl_stat, bl_created, bl_modified, bl_comments)
+        $sql = "INSERT INTO baselines (bl_id, co_id, ctrl_id, bl_stat, bl_created, bl_modified, bl_comments)
         VALUES (NULL,'$cli_id','$ct_id','$ct_sel',NOW(), NOW(), '')";
         mysqli_query($link, $sql);
     }
@@ -65,14 +65,14 @@ function save_baseline($clientctrls) {
 function update_baseline($bl_implementation) {
     global $link;
     foreach ($bl_implementation as $row) {
-        $bl_cl_id = $row['bl_cl_id'];
-        $bl_ctrl_id = $row['bl_ctrl_id'];
+        $co_id = $row['co_id'];
+        $ctrl_id = $row['ctrl_id'];
         $bl_stat = $row['bl_stat'];
         $bl_comments = $row['bl_comments'];
         $bl_created = $row['bl_created'];
 
-        $sql = "UPDATE savedbaselines SET bl_stat = '$bl_stat',
-        bl_comments = '$bl_comments' WHERE bl_cl_id = '$bl_cl_id' AND bl_ctrl_id = '$bl_ctrl_id'
+        $sql = "UPDATE baselines SET bl_stat = '$bl_stat',
+        bl_comments = '$bl_comments' WHERE co_id = '$co_id' AND ctrl_id = '$ctrl_id'
         AND bl_created = '$bl_created'";
         mysqli_query($link, $sql);
     }
@@ -80,9 +80,9 @@ function update_baseline($bl_implementation) {
 
 function get_saved_baseline($clientid) {
     global $db;
-    $sql = 'SELECT sb.bl_id, sb.bl_cl_id, sb.bl_ctrl_id, sb.bl_stat, sb.bl_created, sb.bl_modified, sb.bl_comments, nio.ctrl_name, nio.ctrl_desc
-            FROM savedbaselines sb JOIN nist80053oscal nio ON sb.bl_ctrl_id=nio.ctrl_id
-            WHERE sb.bl_cl_id = :clientid LIMIT 25';
+    $sql = 'SELECT sb.bl_id, sb.co_id, sb.ctrl_id, sb.bl_stat, sb.bl_created, sb.bl_modified, sb.bl_comments, nio.ctrl_name, nio.ctrl_desc
+            FROM baselines sb JOIN nist80053oscal nio ON sb.ctrl_id=nio.ctrl_id
+            WHERE sb.co_id = :clientid LIMIT 25';
     $statement = $db->prepare($sql);
     $statement->bindValue(':clientid', $clientid);
     $statement->execute();
@@ -94,8 +94,8 @@ function get_saved_baseline($clientid) {
 function get_saved_baseline_for_client($clientid) {
     global $db;
     $sql = 'SELECT *
-            FROM savedbaselines
-            WHERE sb.bl_cl_id = :clientid LIMIT 25';
+            FROM baselines
+            WHERE sb.co_id = :clientid LIMIT 25';
     $statement = $db->prepare($sql);
     $statement->bindValue(':clientid', $clientid);
     $statement->execute();

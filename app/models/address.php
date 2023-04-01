@@ -2,8 +2,6 @@
 class Address {
     public function __construct(
         private int $add_id = 0,
-        private int $add_cl_id = 0,
-        private int $add_co_id = 0,
         private string $add_line1 = '',
         private string $add_line2 = '',
         private string $add_city = '',
@@ -17,22 +15,6 @@ class Address {
 
     public function setID(int $value) {
         $this->add_id = $value;
-    }
-
-    public function getClientID() {
-        return $this->add_cl_id;
-    }
-
-    public function setClientID(int $value) {
-        $this->add_cl_id = $value;
-    }
-
-    public function getCompanyID() {
-        return $this->add_co_id;
-    }
-
-    public function setCompanyID(int $value) {
-        $this->add_co_id = $value;
     }
     
     public function getLine1() {

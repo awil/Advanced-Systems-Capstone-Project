@@ -5,7 +5,6 @@ class User {
         private string $u_first = '',
         private string $u_last = '',
         private string $u_title = '',
-        private string $u_alias = '',
         private string $u_email = '',
         private string $u_password = '',
     ) { }
@@ -42,14 +41,6 @@ class User {
         return $this->u_title;
     }
 
-    public function getAlias() {
-        return $this->u_alias;
-    }
-
-    public function setAlias(string $value) {
-        $this->u_alias = $value;
-    }
-    
     public function getName() {
         return "$this->u_first $this->u_last";
     }

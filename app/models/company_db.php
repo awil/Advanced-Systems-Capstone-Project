@@ -16,7 +16,7 @@ class CompanyDB {
             $client = self::loadClient($row);
             return $client;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
@@ -45,7 +45,7 @@ class CompanyDB {
             $client = self::loadClient($row);
             return $client;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ class CompanyDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ class CompanyDB {
             $statement->closeCursor();
             return $cl_id;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ class CompanyDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 }

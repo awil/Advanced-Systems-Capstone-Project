@@ -1,5 +1,5 @@
 <?php
-require_once('../libraries/util.php');
+require_once('../config/util.php');
 
 require_once('../models/user.php');
 require_once('../models/admin.php');
@@ -20,7 +20,7 @@ if ($action == NULL) {
             header ('Location: ./client?action=view_account');
         }
         if (isset($_SESSION['adm_id'])) {
-            header ('Location: ./admin?action=view_account');
+            header ('Location: ./admin?action=view_dashboard');
         }
     }
 }
@@ -30,25 +30,25 @@ $validate = new Validate();
 $fields = $validate->getFields();
 
 // For the Login page
-$fields->addField('u_alias', 'Must be valid username.');
+$fields->addField('u_email', 'Must be valid email.');
 $fields->addField('u_password');
 
 switch ($action) {
     case 'view_login':
         // Clear login data
-        $u_alias = '';
+        $u_email = '';
         $u_password = '';
         $u_password_msg = '';
         
         include '../views/login.php';
         break;
     case 'login':
-        // Get username/password
-        $u_alias = filter_input(INPUT_POST, 'u_alias');
+        // Get email/password
+        $u_email = filter_input(INPUT_POST, 'u_email');
         $u_password = filter_input(INPUT_POST, 'u_password');
         
         // Validate user data       
-        $validate->text('u_alias', $u_alias);
+        $validate->email('u_email', $u_email);
         $validate->text('u_password', $u_password, min:6);        
 
         // If validation errors, redisplay Login page and exit controller
@@ -57,15 +57,15 @@ switch ($action) {
             break;
         }
         
-        // Check database - if valid username/password, log in
-        if (AdminDB::isValidAdminLogin($u_alias, $u_password)) {
-            $admin = AdminDB::getAdminByAlias($u_alias);
+        // Check database - if valid email/password, log in
+        if (AdminDB::isValidAdminLogin($u_email, $u_password)) {
+            $admin = AdminDB::getAdminByEmail($u_email);
             $_SESSION['adm_id'] = $admin->getID();
-        } else if (ClientDB::isValidClientLogin($u_alias, $u_password)) {
-            $client = ClientDB::getClientByAlias($u_alias);
+        } else if (ClientDB::isValidClientLogin($u_email, $u_password)) {
+            $client = ClientDB::getClientByEmail($u_email);
             $_SESSION['cl_id'] = $client->getID();
         } else {
-            $u_password_msg = 'Login failed. Invalid username or password.';
+            $u_password_msg = 'Login failed. Invalid email or password.';
             include '../views/login.php';
             break;
         }
@@ -74,7 +74,7 @@ switch ($action) {
         include('account/account_view.php');
 
         if (isset($_SESSION['adm_id'])) {
-            header ('Location: ./admin?action=view_account');
+            header ('Location: ./admin?action=view_dashboard');
             break;
         } else if (isset($_SESSION['cl_id'])) {
             header ('Location: ./client?action=view_account');

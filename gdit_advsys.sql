@@ -19,9 +19,9 @@ CREATE TABLE admins (
     adm_first varchar(60) NOT NULL,
     adm_last varchar(60) NOT NULL,
     adm_title varchar(255) default NULL,
-    adm_alias varchar(60) NOT NULL,
     adm_email varchar(255) NOT NULL,
     adm_password varchar(60) NOT NULL,
+    adm_access TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (adm_id),
     UNIQUE INDEX adm_email (adm_email)
 );
@@ -30,7 +30,7 @@ CREATE TABLE admins (
 CREATE TABLE companies (
   co_id        INT            NOT NULL   AUTO_INCREMENT,
   co_name    varchar(255) NOT NULL,
-  co_add_id int default null,
+  add_id int default null,
   co_disabled TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (co_id)
   );
@@ -38,15 +38,14 @@ CREATE TABLE companies (
 -- GDIT Clients
 CREATE TABLE clients (
   cl_id        INT            NOT NULL   AUTO_INCREMENT,
+  co_id    int     default NULL,
   cl_first        varchar(60)    NOT NULL,
   cl_last        varchar(60)    NOT NULL,
-  cl_co_id    int     default NULL,
   cl_title      varchar(255) default NULL,
-  cl_alias      varchar(60)     NOT NULL,
   cl_email      VARCHAR(255)   NOT NULL,
   cl_password          VARCHAR(60)    NOT NULL,
   cl_phone  VARCHAR(12) NOT NULL,
-  cl_add_id int default NULL,
+  add_id int default NULL,
   cl_disabled TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (cl_id),
   UNIQUE INDEX cl_email (cl_email)
@@ -55,16 +54,13 @@ CREATE TABLE clients (
 -- GDIT Client/Company Addresses
 CREATE TABLE addresses (
   add_id         INT            NOT NULL   AUTO_INCREMENT,
-  add_cl_id       INT           default null,
-  add_co_id        INT            default NULL,
   add_line1             VARCHAR(60)    NOT NULL,
   add_line2             VARCHAR(60)               DEFAULT NULL,
   add_city              VARCHAR(40)    NOT NULL,
   add_state             VARCHAR(2)     NOT NULL,
   add_zipCode           VARCHAR(10)    NOT NULL,
   add_disabled          TINYINT(1)     NOT NULL   DEFAULT 0,
-  PRIMARY KEY (add_id),
-  INDEX add_co_id (add_co_id)
+  PRIMARY KEY (add_id)
 );
 
 -- Populate Installation table
@@ -75,32 +71,32 @@ INSERT INTO install_options VALUES
 (NULL,'serv_bcryp_cost', '');
 
 -- Populate users table
-INSERT INTO admins (adm_id, adm_first, adm_last, adm_title, adm_alias, adm_email, adm_password) VALUES 
-(1, 'Skylar', 'Masson', 'Student', 'smasson324986', 'smasson324986@nsula.edu', 'Password1'),
-(2, 'Aaron', 'Williams', 'Student', 'awilliams299103', 'awilliams299103@nsula.edu', 'Password1'),
-(3, 'Brandon', 'Heptinstall', 'Student', 'bheptinstall123289','bheptinstall123289@nsula.edu', 'Password1'),
-(4, 'Parker', 'Blanchard', 'Student', 'pblanchard215922','pblanchard215922@nsula.edu', 'Password1'),
-(5, 'Raine', 'Wyandon', 'Student', 'jwyandon247846','jwyandon247846@nsula.edu', 'Password1'),
-(6, 'Michael', 'Shamblin', 'Student', 'mshamblin254657','mshamblin254657@nsula.edu', 'Password1'),
-(7, 'Begona', 'Perez', 'Professor', 'perezmirab','perezmirab@nsula.edu', 'Password1');
+INSERT INTO admins (adm_id, adm_first, adm_last, adm_title, adm_email, adm_password) VALUES 
+(1, 'Skylar', 'Masson', 'Student', 'smasson324986@nsula.edu', 'Password1'),
+(2, 'Aaron', 'Williams', 'Student', 'awilliams299103@nsula.edu', 'Password1'),
+(3, 'Brandon', 'Heptinstall', 'Student', 'bheptinstall123289@nsula.edu', 'Password1'),
+(4, 'Parker', 'Blanchard', 'Student', 'pblanchard215922@nsula.edu', 'Password1'),
+(5, 'Raine', 'Wyandon', 'Student', 'jwyandon247846@nsula.edu', 'Password1'),
+(6, 'Michael', 'Shamblin', 'Student', 'mshamblin254657@nsula.edu', 'Password1'),
+(7, 'Begona', 'Perez', 'Professor', 'perezmirab@nsula.edu', 'Password1');
 
-INSERT INTO companies (co_id, co_name, co_add_id, co_disabled) VALUES
+INSERT INTO companies (co_id, co_name, add_id, co_disabled) VALUES
 (1, 'Northwestern State University of Louisiana', 1, 0),
 (2, 'General Dynamics Information Technology', 2, 0);
 
 -- Populate clients
-INSERT INTO clients (cl_id, cl_first, cl_last, cl_co_id, cl_title, cl_alias, cl_email, cl_password, cl_phone, cl_add_id, cl_disabled) VALUES 
-(1, 'Begona', 'Perez', 1, 'Professor', 'perezmirab', 'perezmirab@nsula.edu', 'Password1', '318-357-6650', 1, 0),
-(2, 'Marty', 'Lesperance', 2, 'Cyber Security Senior Manager – Cyber Engineering', 'mlesperance', 'mlesperance@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(3, 'Destinee', 'Mizell', 2, 'Information Security Manager - Governance, Risk and Compliance', 'dmizell', 'dmizell@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(4, 'Tim', 'Lamm', 2, 'Information Security Analyst Sr. Advisor', 'tlamm', 'tlamm@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(5, 'Kay', 'Bourgeois', 2, 'Information Security Analyst Advisor', 'kbourgeois', 'kbourgeois@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(6, 'Matt', 'Shadwick', 2, 'Information Security Analyst Advisor', 'mshadwick', 'mshadwick@gdit.com', 'Password1', '703-641-2000', 2, 0);
+INSERT INTO clients (cl_id, cl_first, cl_last, co_id, cl_title, cl_email, cl_password, cl_phone, add_id, cl_disabled) VALUES 
+(1, 'First', 'Last', 1, 'Example Client', 'client@nsula.edu', 'Password1', '318-357-6650', 1, 0),
+(2, 'Marty', 'Lesperance', 2, 'Cyber Security Senior Manager – Cyber Engineering', 'mlesperance@gdit.com', 'Password1', '703-641-2000', 2, 0),
+(3, 'Destinee', 'Mizell', 2, 'Information Security Manager - Governance, Risk and Compliance', 'dmizell@gdit.com', 'Password1', '703-641-2000', 2, 0),
+(4, 'Tim', 'Lamm', 2, 'Information Security Analyst Sr. Advisor', 'tlamm@gdit.com', 'Password1', '703-641-2000', 2, 0),
+(5, 'Kay', 'Bourgeois', 2, 'Information Security Analyst Advisor', 'kbourgeois@gdit.com', 'Password1', '703-641-2000', 2, 0),
+(6, 'Matt', 'Shadwick', 2, 'Information Security Analyst Advisor', 'mshadwick@gdit.com', 'Password1', '703-641-2000', 2, 0);
 
 -- Populate Addresses
-INSERT INTO addresses (add_id, add_cl_id, add_co_id, add_line1, add_line2, add_city, add_state, add_zipCode, add_disabled) VALUES
-(1, 1, 1, '175 Sam Sibley Dr', '211 Russell Hall', 'Natchitoches', 'LA', '71497',  0),
-(2, 2, 2, '6310 E Texas St', '', 'Bossier City', 'LA', '71111',  0);
+INSERT INTO addresses (add_id, add_line1, add_line2, add_city, add_state, add_zipCode, add_disabled) VALUES
+(1, '175 Sam Sibley Dr', '211 Russell Hall', 'Natchitoches', 'LA', '71497',  0),
+(2, '6310 E Texas St', '', 'Bossier City', 'LA', '71111',  0);
 
 -- Create admin
 CREATE USER IF NOT EXISTS ts_user@localhost
@@ -136,28 +132,39 @@ CREATE TABLE `nist80053oscal` (
   PRIMARY KEY (ctrl_ID)
 );
 
-
-
--- GDIT SavedBaselines
-CREATE TABLE savedbaselines (
+-- GDIT Baselines
+CREATE TABLE baselines (
   bl_id            INT           NOT NULL AUTO_INCREMENT,
-  bl_co_id        INT            NOT NULL,
-  bl_ctrl_id         VARCHAR(18),
+  co_id        INT            NOT NULL,
+  bl_system VARCHAR(255) NOT NULL,
+  bl_impact_lvl         INT NOT NULL,
   bl_stat        VARCHAR(15),
   bl_created      DATETIME   NOT NULL,
   bl_modified     DATETIME   NOT NULL,
   bl_comments   TEXT,
   PRIMARY KEY (bl_id),
-  FOREIGN KEY (bl_co_id) REFERENCES companies(co_id),
-  FOREIGN KEY (bl_ctrl_id) REFERENCES nist80053oscal(ctrl_id)
-  -- TODO FK -> nist table -> ctrl_id
+  FOREIGN KEY (co_id) REFERENCES companies(co_id)
 );
 
-CREATE TABLE nist_poam (
+CREATE TABLE bl_controls (
+  blc_id            INT           NOT NULL AUTO_INCREMENT,
+  bl_id     INT NOT NULL,
+  ctrl_id         VARCHAR(18),
+  blc_stat        VARCHAR(15),
+  blc_created      DATETIME   NOT NULL,
+  blc_modified     DATETIME   ,
+  blc_comments   TEXT,
+  PRIMARY KEY (blc_id),
+  FOREIGN KEY (bl_id) REFERENCES baselines(bl_id),
+  FOREIGN KEY (ctrl_id) REFERENCES nist80053oscal(ctrl_id)
+);
+
+CREATE TABLE poam (
   poam_id   INT   NOT NULL AUTO_INCREMENT,
-  poam_ctrl_id VARCHAR(18),
-  poam_co_id  INT   NOT NULL,
+  bl_id  INT   NOT NULL,
+  blc_id  INT   NOT NULL,
   poam_created  DATETIME NOT NULL,
+  poam_modified DATETIME NULL,
   poam_item_003 TEXT,
   poam_item_004 TEXT,
   poam_item_005 VARCHAR(255),
@@ -187,23 +194,23 @@ CREATE TABLE nist_poam (
   poam_item_029 DATE,
   poam_item_030 VARCHAR(255),
   PRIMARY KEY (poam_id),
-  FOREIGN KEY (poam_co_id) REFERENCES companies(co_id),
-  FOREIGN KEY (poam_ctrl_id) REFERENCES nist80053oscal(ctrl_id)
+  FOREIGN KEY (bl_id) REFERENCES baselines(bl_id),
+  FOREIGN KEY (blc_id) REFERENCES bl_controls(blc_id)
 );
 
 
 -- Access Log Table
 CREATE TABLE access_log (
   acc_id INT NOT NULL AUTO_INCREMENT,
-  acc_adm_id INT NOT NULL,
+  adm_id INT NOT NULL,
   acc_firstAcc  DATETIME default NULL,
   acc_lastAcc   DATETIME  default NULL,
-  acc_co_id INT NOT NULL,
-  acc_bl_id INT NOT NULL,
+  co_id INT NOT NULL,
+  bl_id INT NOT NULL,
   PRIMARY KEY (acc_id),
-  FOREIGN KEY (acc_adm_id) REFERENCES admins(adm_id),
-  FOREIGN KEY (acc_co_id) REFERENCES companies(co_id),
-  FOREIGN KEY (acc_bl_id) REFERENCES savedbaselines(bl_id)
+  FOREIGN KEY (adm_id) REFERENCES admins(adm_id),
+  FOREIGN KEY (co_id) REFERENCES companies(co_id),
+  FOREIGN KEY (bl_id) REFERENCES baselines(bl_id)
 );
 
 --

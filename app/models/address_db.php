@@ -2,7 +2,7 @@
 class AddressDB {
     public static function getAddress(int $add_id) {
         $db = Database::getDB();
-        $query = 'SELECT add_id, add_cl_id, add_co_id, add_line1, add_line2, add_city, add_state, add_zipCode
+        $query = 'SELECT add_id, add_line1, add_line2, add_city, add_state, add_zipCode
                   FROM addresses 
                   WHERE add_id = :address_id';
         try {
@@ -14,26 +14,25 @@ class AddressDB {
             $statement->closeCursor();
             
             if ($row) {
-                return new Address($row['add_id'], $row['add_cl_id'], $row['add_co_id'], $row['add_line1'], $row['add_line2'], 
+                return new Address($row['add_id'], $row['add_line1'], $row['add_line2'], 
                                    $row['add_city'], $row['add_state'],
                                    $row['add_zipCode'],);
             } else {
                 return NULL;
             }
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
-    public static function addAddress(int $add_cl_id, Address $address) {
+    public static function addAddress(Address $address) {
             $db = Database::getDB();
-            $query = 'INSERT INTO addresses (add_cl_id, add_line1, add_line2,
+            $query = 'INSERT INTO addresses (add_line1, add_line2,
                                     add_city, add_state, add_zipCode)
-                      VALUES (:add_cl_id, :add_line1, :add_line2,
+                      VALUES (:add_line1, :add_line2,
                                     :add_city, :add_state, :add_zipCode)';
         try {
             $statement = $db->prepare($query);
-            $statement->bindValue(':add_cl_id', $add_cl_id);
             $statement->bindValue(':add_line1', $address->getLine1());
             $statement->bindValue(':add_line2', $address->getLine2());
             $statement->bindValue(':add_city', $address->getCity());
@@ -45,15 +44,14 @@ class AddressDB {
             $statement->closeCursor();
             return $add_id;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
     public static function updateAddress (Address $address) {
         $db = Database::getDB();
         $query = 'UPDATE addresses
-                  SET add_cl_id = :add_cl_id,
-                  add_line1 = :add_line1,
+                  SET add_line1 = :add_line1,
                   add_line2 = :add_line2,
                   add_city = :add_city,
                   add_state = :add_state,
@@ -62,7 +60,6 @@ class AddressDB {
         try {
             $statement = $db->prepare($query);
             $statement->bindValue(':add_id', $address->getID());
-            $statement->bindValue(':add_cl_id', $address->getClientID());
             $statement->bindValue(':add_line1', $address->getLine1());
             $statement->bindValue(':add_line2', $address->getLine2());
             $statement->bindValue(':add_city', $address->getCity());
@@ -74,7 +71,7 @@ class AddressDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -92,7 +89,7 @@ class AddressDB {
                 $statement->closeCursor();
                 return $row_count;
             } catch (PDOException $e) {
-                Database::displayError($e->getMessage());
+                displayDatabaseError($e->getMessage());
             }
         } else {
             $query = 'DELETE FROM addresses 
@@ -106,7 +103,7 @@ class AddressDB {
                 $statement->closeCursor();
                 return $row_count;
             } catch (PDOException $e) {
-                Database::displayError($e->getMessage());
+                displayDatabaseError($e->getMessage());
             }
         }
     }
@@ -116,7 +113,7 @@ class AddressDB {
 
         // Check if the address is used as a client address
         $query1 = 'SELECT COUNT(*) FROM clients 
-                   WHERE cl_add_id = :value';
+                   WHERE add_id = :value';
         $statement1 = $db->prepare($query1);
         $statement1->bindValue(':value', $add_id);
         $statement1->execute();

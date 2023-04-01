@@ -14,12 +14,12 @@
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <?php
                         /* Show menu items if user is logged in. */
-                        $account_url = $app_path.'controllers/?action=view_login';
-                        $logout_url = $app_path.'controllers/?action=logout';
+                        $account_url = $app_path.'controllers?action=view_login';
+                        $logout_url = $app_path.'controllers?action=logout';
                         if (isset($_SESSION['adm_id'])) :
                     ?>
                     <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 pe-lg-2 active" href="<?php echo $app_path ?>">Home</a>
+                        <a class="nav-link py-2 px-0 pe-lg-2 active" href="<?php echo $app_path.'controllers/admin?view_dashboard' ?>">Home</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
                         <a class="nav-link py-2 px-0 px-lg-2" href="">Dashboard</a>

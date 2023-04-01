@@ -10,9 +10,9 @@
                 <input type="hidden" name="action" value="login">
                 
                 <div class="form-floating mb-3">
-                    <input type="text" name="adm_alias" class="form-control" id="floatingInput" placeholder="name@example.com" value="<?php echo htmlspecialchars($adm_alias); ?>" size="30">
-                    <?php echo $fields->getField('adm_alias')->getHTML(); ?>
-                    <label for="floatingInput">Username:</label>
+                    <input type="text" name="adm_email" class="form-control" id="floatingInput" placeholder="name@example.com" value="<?php echo htmlspecialchars($adm_email); ?>" size="30">
+                    <?php echo $fields->getField('adm_email')->getHTML(); ?>
+                    <label for="floatingInput">Email:</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="password" name="adm_password" class="form-control" id="floatingPassword" placeholder="Password" size="30">

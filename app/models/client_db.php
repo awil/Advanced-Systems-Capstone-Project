@@ -1,5 +1,27 @@
 <?php
 class ClientDB {
+
+    public static function getAllClients() {
+        $db = Database::getDB();
+        $q = 'SELECT * from clients order by cl_last, cl_first';
+
+        try{
+            $stmt = $db->prepare($q);
+            $stmt->execute();
+            
+            $rows = $stmt->fetchAll();
+            $stmt->closeCursor();
+
+            $clients = [];
+            foreach ($rows as $row) {
+                $clients[] = self::loadClient($row);
+            }
+            return $clients;
+        } catch (PDOException $e) {
+            displayDatabaseError($e->getMessage());
+        }
+    }
+
     public static function hasClientEmail(string $email) {
         $db = Database::getDB();
         $query = 'SELECT cl_id 
@@ -14,18 +36,18 @@ class ClientDB {
             $statement->closeCursor();
             return $valid;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
-    public static function isValidClientLogin(string $cl_alias, string $password) {
+    public static function isValidClientLogin(string $cl_email, string $password) {
         $db = Database::getDB();
         $query = 'SELECT cl_password 
                   FROM clients
-                  WHERE cl_alias = :cl_alias';
+                  WHERE cl_email = :cl_email';
         try {
             $statement = $db->prepare($query);
-            $statement->bindValue(':cl_alias', $cl_alias);
+            $statement->bindValue(':cl_email', $cl_email);
             $statement->execute();
             
             $row = $statement->fetch();
@@ -37,14 +59,14 @@ class ClientDB {
                 return password_verify($password, $hash);
             }
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
     public static function getClient(int $cl_id) {
         $db = Database::getDB();
-        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_alias, cl_password,
-                            cl_co_id, cl_title, cl_add_id
+        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_password,
+                            co_id, cl_title, add_id
                   FROM clients 
                   WHERE cl_id = :client_id';
         try {
@@ -58,44 +80,25 @@ class ClientDB {
             $client = self::loadClient($row);
             return $client;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
     private static function loadClient($row) {
         if ($row) {
             return new Client($row['cl_id'], $row['cl_first'], 
-                                $row['cl_last'], $row['cl_email'], $row['cl_alias'],
-                                $row['cl_password'], $row['cl_co_id'], 
-                                $row['cl_title'], $row['cl_add_id'], );
+                                $row['cl_last'], $row['cl_email'],
+                                $row['cl_password'], $row['co_id'], 
+                                $row['cl_title'], $row['add_id'], );
         } else {
             return NULL;
         }
     }
 
-    public static function getClientByAlias(string $cl_alias) {
-        $db = Database::getDB();
-        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_alias, cl_password,
-                            cl_co_id, cl_title, cl_add_id FROM clients WHERE cl_alias = :cl_alias';
-        try {
-            $statement = $db->prepare($query);
-            $statement->bindValue(':cl_alias', $cl_alias);
-            $statement->execute();
-            
-            $row = $statement->fetch();
-            $statement->closeCursor();
-
-            $client = self::loadClient($row);
-            return $client;
-        } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
-        }
-    }
-
     public static function getClientByEmail(string $email) {
         $db = Database::getDB();
-        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_alias, cl_password,
-                            cl_co_id, cl_title, cl_add_id
+        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_password,
+                            co_id, cl_title, add_id
                   FROM clients 
                   WHERE cl_email = :client_email';
         try {
@@ -109,18 +112,18 @@ class ClientDB {
             $client = self::loadClient($row);
             return $client;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
-    public static function clientChangeAddress(int $cl_id, int $cl_add_id) {
+    public static function clientChangeAddress(int $cl_id, int $add_id) {
         $db = Database::getDB();
         $query = 'UPDATE clients 
-                  SET cl_add_id = :address_id 
+                  SET add_id = :address_id 
                   WHERE cl_id = :client_id';
         try {
             $statement = $db->prepare($query);
-            $statement->bindValue(':address_id', $cl_add_id);
+            $statement->bindValue(':address_id', $add_id);
             $statement->bindValue(':client_id', $cl_id);
             $statement->execute();
             
@@ -128,7 +131,7 @@ class ClientDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -147,18 +150,18 @@ class ClientDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
-    public static function clientChangeCompany(int $cl_id, string $cl_co_id) {
+    public static function clientChangeCompany(int $cl_id, string $co_id) {
         $db = Database::getDB();
         $query = 'UPDATE clients 
-                  SET cl_co_id = :client_co_id
+                  SET co_id = :client_co_id
                   WHERE cl_id = :client_id';
         try {
             $statement = $db->prepare($query);
-            $statement->bindValue(':client_co_id', $cl_co_id);
+            $statement->bindValue(':client_co_id', $co_id);
             $statement->bindValue(':client_id', $cl_id);
             $statement->execute();
             
@@ -166,7 +169,7 @@ class ClientDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
@@ -186,7 +189,7 @@ class ClientDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -195,9 +198,9 @@ class ClientDB {
         $hash = password_hash($client->getPassword(), PASSWORD_DEFAULT);
         
         $query = 'INSERT INTO clients 
-                      (cl_email, cl_password, cl_first, cl_last, cl_co_id, cl_title, cl_alias, cl_phone, cl_add_id)
+                      (cl_email, cl_password, cl_first, cl_last, co_id, cl_title, cl_phone, add_id)
                   VALUES 
-                      (:client_email, :client_password, :client_first, :client_last, :client_co, :client_title, :client_alias, :client_phone, :client_address)';
+                      (:client_email, :client_password, :client_first, :client_last, :client_co, :client_title, :client_phone, :client_address)';
         try {
             $statement = $db->prepare($query);
             $statement->bindValue(':client_email', $client->getEmail());
@@ -206,7 +209,6 @@ class ClientDB {
             $statement->bindValue(':client_last', $client->getLastName());
             $statement->bindValue(':client_co', $client->getCompany());
             $statement->bindValue(':client_title', $client->getTitle());
-            $statement->bindValue(':client_alias', $client->getAlias());
             $statement->bindValue(':client_phone', $client->getPhone());
             $statement->bindValue(':client_address', $client->getClientAddress());
             $statement->execute();
@@ -215,7 +217,7 @@ class ClientDB {
             $statement->closeCursor();
             return $cl_id;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -236,7 +238,7 @@ class ClientDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 }

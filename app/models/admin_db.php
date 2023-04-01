@@ -1,13 +1,13 @@
 <?php
 class AdminDB {
-    public static function isValidAdminLogin($alias, $password) {
+    public static function isValidAdminLogin($email, $password) {
         $db = Database::getDB();
         $query = 'SELECT adm_password 
                   FROM admins
-                  WHERE adm_alias = :admin_alias';
+                  WHERE adm_email = :admin_email';
         try {
             $statement = $db->prepare($query);
-            $statement->bindValue(':admin_alias', $alias);
+            $statement->bindValue(':admin_email', $email);
             $statement->execute();
 
             $row = $statement->fetch();
@@ -19,7 +19,7 @@ class AdminDB {
                 return password_verify($password, $hash);
             }
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
@@ -37,25 +37,7 @@ class AdminDB {
             $statement->closeCursor();
             return $valid;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
-        }
-    }
-
-    public static function isValidAdminAlias($alias) {
-        $db = Database::getDB();
-        $query = 'SELECT adm_id  
-                  FROM admins
-                  WHERE adm_alias = :admin_alias';
-        try {
-            $statement = $db->prepare($query);
-            $statement->bindValue(':admin_alias', $alias);
-            $statement->execute();
-            
-            $valid = ($statement->rowCount() == 1);
-            $statement->closeCursor();
-            return $valid;
-        } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
@@ -76,14 +58,14 @@ class AdminDB {
                 return 0;
             }
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
     public static function getAllAdmins() {
         $db = Database::getDB();
         $query = 'SELECT adm_id, adm_first, adm_last, adm_title,
-                      adm_email, adm_alias, adm_password 
+                      adm_email, adm_password 
                   FROM admins 
                   ORDER BY adm_last, adm_first';
         try {
@@ -99,21 +81,20 @@ class AdminDB {
             }
             return $admins;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
     private static function loadAdmin($row) {
         return new Admin($row['adm_id'], $row['adm_first'], 
                          $row['adm_last'], $row['adm_title'], $row['adm_email'], 
-                         $row['adm_alias'],
                          $row['adm_password'], );
     }
 
     public static function getAdmin ($adm_id) {
         $db = Database::getDB();
         $query = 'SELECT adm_id, adm_first, adm_last, adm_title,
-                      adm_email, adm_alias, adm_password 
+                      adm_email, adm_password 
                   FROM admins 
                   WHERE adm_id = :adm_id';
         try {
@@ -130,14 +111,14 @@ class AdminDB {
                 return NULL;
             }
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
     public static function getAdminByEmail ($email) {
         $db = Database::getDB();
         $query = 'SELECT adm_id, adm_first, adm_last, adm_title,
-                      adm_email, adm_alias, adm_password  
+                      adm_email, adm_password  
                   FROM admins 
                   WHERE adm_email = :adm_email';
         try {
@@ -154,31 +135,7 @@ class AdminDB {
                 return NULL;
             }
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
-        }
-    }
-
-    public static function getAdminByAlias ($adm_alias) {
-        $db = Database::getDB();
-        $query = 'SELECT adm_id, adm_first, adm_last, adm_title,
-                      adm_email, adm_alias, adm_password  
-                  FROM admins 
-                  WHERE adm_alias = :adm_alias';
-        try {
-            $statement = $db->prepare($query);
-            $statement->bindValue(':adm_alias', $adm_alias);
-            $statement->execute();
-            
-            $row = $statement->fetch();
-            $statement->closeCursor();
-            
-            if ($row) {
-                return self::loadAdmin($row);
-            } else {
-                return NULL;
-            }
-        } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -186,13 +143,12 @@ class AdminDB {
         $db = Database::getDB();
         $hash = password_hash($admin->getPassword(), PASSWORD_DEFAULT);
         $query = 'INSERT INTO admins 
-                      (adm_email, adm_alias, adm_password, adm_first, adm_last, adm_title)
+                      (adm_email, adm_password, adm_first, adm_last, adm_title)
                   VALUES 
-                      (:adm_email, :adm_alias, :adm_password, :adm_first, :adm_last, :adm_title)';
+                      (:adm_email, :adm_password, :adm_first, :adm_last, :adm_title)';
         try {
             $statement = $db->prepare($query);
             $statement->bindValue(':adm_email', $admin->getEmail());
-            $statement->bindValue(':adm_alias', $admin->getAlias());
             $statement->bindValue(':adm_password', $hash);
             $statement->bindValue(':adm_first', $admin->getFirstName());
             $statement->bindValue(':adm_last', $admin->getLastName());
@@ -203,7 +159,7 @@ class AdminDB {
             $statement->closeCursor();
             return $adm_id;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -213,14 +169,14 @@ class AdminDB {
                   SET adm_first = :adm_first,
                       adm_last = :adm_last,
                       adm_title = :adm_title,
-                      adm_alias = :adm_alias,
+                      adm_email = :adm_email,
                   WHERE adm_id = :adm_id';
         try {
             $statement = $db->prepare($query);
             $statement->bindValue(':adm_first', $admin->getFirstName());
             $statement->bindValue(':adm_last', $admin->getLastName());
             $statement->bindValue(':adm_title', $admin->getTitle());
-            $statement->bindValue(':adm_alias', $admin->getAlias());
+            $statement->bindValue(':adm_email', $admin->getEmail());
             $statement->bindValue(':adm_id', $admin->getID());
             $statement->execute();
             
@@ -228,7 +184,7 @@ class AdminDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
     
@@ -248,7 +204,7 @@ class AdminDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 
@@ -265,7 +221,7 @@ class AdminDB {
             $statement->closeCursor();
             return $row_count;
         } catch (PDOException $e) {
-            Database::displayError($e->getMessage());
+            displayDatabaseError($e->getMessage());
         }
     }
 }

@@ -1,12 +1,12 @@
 <?php
-  // Load required files
-  require_once('libraries/util.php');
+/**
+ * This loads the site 
+ */
+  require_once __DIR__.'/config/util.php';
 
-  // require_once('libraries/core.php');
-
-  // Load Helpers
-  require_once('helpers/tag_format.php');
-  require_once('helpers/url_redirect.php');
+  if ( !defined('ABSPATH') ) {
+    define('ABSPATH', __DIR__.'/');
+  }
 
   include('views/home.php');
 ?>
