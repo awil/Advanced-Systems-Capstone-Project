@@ -4,6 +4,8 @@ require_once('../../config/util.php');
 require_once('../../models/user.php');
 require_once('../../models/admin.php');
 require_once('../../models/admin_db.php');
+require_once('../../models/log.php');
+require_once('../../models/log_db.php');
 require_once('../../models/client.php');
 require_once('../../models/client_db.php');
 require_once('../../models/fields.php');
@@ -11,13 +13,10 @@ require_once('../../models/validate.php');
 
 
 $action = filter_input(INPUT_POST, 'action');
-if ($action == NULL) {
+if ($action === NULL) {
     $action = filter_input(INPUT_GET, 'action');
-    if ($action == NULL) {        
+    if ($action === NULL) {        
         $action = 'view_dashboard';
-        if (isset($_SESSION['adm_id'])) {
-            $action = 'view_dashboard';
-        }
     }
 }
 
@@ -31,9 +30,9 @@ $fields->addField('adm_password_1');
 $fields->addField('adm_password_2');
 $fields->addField('adm_first');
 $fields->addField('adm_last');
+$fields->addField('adm_title');
 
 // For the Login page
-$fields->addField('adm_password');
 
 switch ($action) {
     case 'view_login':
@@ -69,6 +68,12 @@ switch ($action) {
             break;
         }
 
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setAccData("User logged in.");
+        LogDB::updateLog($l);
+
         // Display Admin Menu page
         include('account/account_view.php');
         break;
@@ -76,11 +81,31 @@ switch ($action) {
         // Get all accounts and current admin from database
         $admins = AdminDB::getAllAdmins();
         $clients = ClientDB::getAllClients();
-
+        // var_dump($clients);
         $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
 
         // View admin accounts
         include 'dashboard.php';
+        break;
+    case 'view_account':
+        // Get all accounts and current admin from database
+        // var_dump($clients);
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+        // View admin accounts
+        include 'account/account_view.php';
+        break;
+    case 'view_log':
+        $logs = LogDB::getAccessLog();
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+
+        include 'access_log.php';
+        break;
+    case 'select_client':
+        // Select the client
+        $_SESSION['cl_id'] = filter_input(INPUT_POST, 'cl_id');
+        $_SESSION['co_id'] = filter_input(INPUT_POST, 'co_id');
+
+        header("Location: " .$app_path.'controllers/baseline?action=start_baseline');
         break;
     case 'create':
         // Get admin user data
@@ -136,22 +161,24 @@ switch ($action) {
         $admin->setID(filter_input(INPUT_POST, 'adm_id', FILTER_VALIDATE_INT));
         $admin->setFirstName(filter_input(INPUT_POST, 'adm_first'));
         $admin->setLastName(filter_input(INPUT_POST, 'adm_last'));
-        $admin->setPassword(filter_input(INPUT_POST, 'password_1'));
-        $confirm_password = filter_input(INPUT_POST, 'password_2');
+        $admin->setTitle(filter_input(INPUT_POST, 'adm_title'));
+        $admin->setEmail(filter_input(INPUT_POST, 'adm_email'));
+        $admin->setPassword(filter_input(INPUT_POST, 'adm_password_1'));
+        $confirm_password = filter_input(INPUT_POST, 'adm_password_2');
         
         // allow password and confirm password to be blank
-        $fields->getField('password_1')->setRequired(FALSE);
-        $fields->getField('password_2')->setRequired(FALSE);
+        $fields->getField('adm_password_1')->setRequired(FALSE);
+        $fields->getField('adm_password_2')->setRequired(FALSE);
         
         // Validate admin user data
         $validate->text('adm_first', $admin->getFirstName());
         $validate->text('adm_last', $admin->getLastName());        
-        $validate->text('password_1', $admin->getPassword(), min:6);
-        $validate->verify('password_2', $admin->getPassword(), $confirm_password);   
+        $validate->text('adm_password_1', $admin->getPassword(), min:6);
+        $validate->verify('adm_password_2', $admin->getPassword(), $confirm_password);   
         
         // If validation errors, redisplay edit page and exit controller
         if ($fields->hasErrors()) {
-            include 'account/account_edit.php';
+            include 'account/account_view.php';
             break;
         }
 
@@ -159,23 +186,23 @@ switch ($action) {
         if ($admin->hasPassword()) {
             AdminDB::changePassword($admin);
         }
-        
-        include('account/account_edit.php');
-        break;
-    case 'view_delete_confirm':
-        $adm_id = filter_input(INPUT_POST, 'adm_id', FILTER_VALIDATE_INT);
-        if ($adm_id == $_SESSION['adm_id']) {
-            display_error('You cannot delete your own account.');
-        }
-        $admin = AdminDB::getAdmin($adm_id);
-        include 'account/account_delete.php';
-        break;
-    case 'delete':
-        $adm_id = filter_input(INPUT_POST, 'adm_id', FILTER_VALIDATE_INT);
-        AdminDB::deleteAdmin($adm_id);
-        include('account/account_delete.php');
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setAccData($current_admin->getName().' updated UID: '.$admin->getID().' Name: '.$admin->getName().'.');
+        LogDB::updateLog($l);
+
+        include('account/account_view.php');
         break;
     case 'logout':
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setAccData($current_admin->getName().' logged out.');
+        LogDB::updateLog($l);
+
         unset($_SESSION['adm_id']);
         $_SESSION = [];
         include '.';

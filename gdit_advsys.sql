@@ -38,12 +38,12 @@ CREATE TABLE companies (
 -- GDIT Clients
 CREATE TABLE clients (
   cl_id        INT            NOT NULL   AUTO_INCREMENT,
-  co_id    int     default NULL,
   cl_first        varchar(60)    NOT NULL,
   cl_last        varchar(60)    NOT NULL,
   cl_title      varchar(255) default NULL,
   cl_email      VARCHAR(255)   NOT NULL,
   cl_password          VARCHAR(60)    NOT NULL,
+  co_id    int     default NULL,
   cl_phone  VARCHAR(12) NOT NULL,
   add_id int default NULL,
   cl_disabled TINYINT(1)  NOT NULL DEFAULT 0,
@@ -72,13 +72,13 @@ INSERT INTO install_options VALUES
 
 -- Populate users table
 INSERT INTO admins (adm_id, adm_first, adm_last, adm_title, adm_email, adm_password) VALUES 
-(1, 'Skylar', 'Masson', 'Student', 'smasson324986@nsula.edu', 'Password1'),
-(2, 'Aaron', 'Williams', 'Student', 'awilliams299103@nsula.edu', 'Password1'),
-(3, 'Brandon', 'Heptinstall', 'Student', 'bheptinstall123289@nsula.edu', 'Password1'),
-(4, 'Parker', 'Blanchard', 'Student', 'pblanchard215922@nsula.edu', 'Password1'),
-(5, 'Raine', 'Wyandon', 'Student', 'jwyandon247846@nsula.edu', 'Password1'),
-(6, 'Michael', 'Shamblin', 'Student', 'mshamblin254657@nsula.edu', 'Password1'),
-(7, 'Begona', 'Perez', 'Professor', 'perezmirab@nsula.edu', 'Password1');
+(1, 'Skylar', 'Masson', 'Student', 'smasson324986@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
+(2, 'Aaron', 'Williams', 'Student', 'awilliams299103@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
+(3, 'Brandon', 'Heptinstall', 'Student', 'bheptinstall123289@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
+(4, 'Parker', 'Blanchard', 'Student', 'pblanchard215922@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
+(5, 'Raine', 'Wyandon', 'Student', 'jwyandon247846@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
+(6, 'Michael', 'Shamblin', 'Student', 'mshamblin254657@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
+(7, 'Begona', 'Perez', 'Professor', 'perezmirab@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a');
 
 INSERT INTO companies (co_id, co_name, add_id, co_disabled) VALUES
 (1, 'Northwestern State University of Louisiana', 1, 0),
@@ -86,12 +86,12 @@ INSERT INTO companies (co_id, co_name, add_id, co_disabled) VALUES
 
 -- Populate clients
 INSERT INTO clients (cl_id, cl_first, cl_last, co_id, cl_title, cl_email, cl_password, cl_phone, add_id, cl_disabled) VALUES 
-(1, 'First', 'Last', 1, 'Example Client', 'client@nsula.edu', 'Password1', '318-357-6650', 1, 0),
-(2, 'Marty', 'Lesperance', 2, 'Cyber Security Senior Manager – Cyber Engineering', 'mlesperance@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(3, 'Destinee', 'Mizell', 2, 'Information Security Manager - Governance, Risk and Compliance', 'dmizell@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(4, 'Tim', 'Lamm', 2, 'Information Security Analyst Sr. Advisor', 'tlamm@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(5, 'Kay', 'Bourgeois', 2, 'Information Security Analyst Advisor', 'kbourgeois@gdit.com', 'Password1', '703-641-2000', 2, 0),
-(6, 'Matt', 'Shadwick', 2, 'Information Security Analyst Advisor', 'mshadwick@gdit.com', 'Password1', '703-641-2000', 2, 0);
+(1, 'First', 'Last', 1, 'Example Client', 'client@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a', '318-357-6650', 1, 0),
+(2, 'Marty', 'Lesperance', 2, 'Cyber Security Senior Manager – Cyber Engineering', 'mlesperance@gdit.com', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a', '703-641-2000', 2, 0),
+(3, 'Destinee', 'Mizell', 2, 'Information Security Manager - Governance, Risk and Compliance', 'dmizell@gdit.com', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a', '703-641-2000', 2, 0),
+(4, 'Tim', 'Lamm', 2, 'Information Security Analyst Sr. Advisor', 'tlamm@gdit.com', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a', '703-641-2000', 2, 0),
+(5, 'Kay', 'Bourgeois', 2, 'Information Security Analyst Advisor', 'kbourgeois@gdit.com', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a', '703-641-2000', 2, 0),
+(6, 'Matt', 'Shadwick', 2, 'Information Security Analyst Advisor', 'mshadwick@gdit.com', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a', '703-641-2000', 2, 0);
 
 -- Populate Addresses
 INSERT INTO addresses (add_id, add_line1, add_line2, add_city, add_state, add_zipCode, add_disabled) VALUES
@@ -102,10 +102,13 @@ INSERT INTO addresses (add_id, add_line1, add_line2, add_city, add_state, add_zi
 CREATE USER IF NOT EXISTS ts_user@localhost
 IDENTIFIED BY 'pa55word';
 
-GRANT SELECT, INSERT, UPDATE, DELETE
-ON *
-TO ts_user@localhost;
+CREATE USER IF NOT EXISTS ts_tester@localhost 
+IDENTIFIED BY 'pa55word';
 
+-- grant privleges to the users
+GRANT SELECT, INSERT, DELETE, UPDATE
+ON * 
+TO ts_user@localhost;
 
 -- NIST 80053 Begin --
 
@@ -137,11 +140,12 @@ CREATE TABLE baselines (
   bl_id            INT           NOT NULL AUTO_INCREMENT,
   co_id        INT            NOT NULL,
   bl_system VARCHAR(255) NOT NULL,
-  bl_impact_lvl         INT NOT NULL,
+  bl_impact_lvl  VARCHAR(20) NOT NULL,
   bl_stat        VARCHAR(15),
   bl_created      DATETIME   NOT NULL,
   bl_modified     DATETIME   NOT NULL,
   bl_comments   TEXT,
+  bl_hideselect BOOLEAN,
   PRIMARY KEY (bl_id),
   FOREIGN KEY (co_id) REFERENCES companies(co_id)
 );
@@ -203,14 +207,12 @@ CREATE TABLE poam (
 CREATE TABLE access_log (
   acc_id INT NOT NULL AUTO_INCREMENT,
   adm_id INT NOT NULL,
-  acc_firstAcc  DATETIME default NULL,
-  acc_lastAcc   DATETIME  default NULL,
-  co_id INT NOT NULL,
-  bl_id INT NOT NULL,
+  acc_date  DATETIME default NULL,
+  acc_data TEXT NULL,
+  co_id INT NULL,
+  bl_id INT NULL,
   PRIMARY KEY (acc_id),
-  FOREIGN KEY (adm_id) REFERENCES admins(adm_id),
-  FOREIGN KEY (co_id) REFERENCES companies(co_id),
-  FOREIGN KEY (bl_id) REFERENCES baselines(bl_id)
+  FOREIGN KEY (adm_id) REFERENCES admins(adm_id)
 );
 
 --

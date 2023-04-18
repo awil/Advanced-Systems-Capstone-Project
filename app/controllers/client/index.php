@@ -2,8 +2,12 @@
 require_once('../../config/util.php');
 
 require_once('../../models/user.php');
+require_once('../../models/admin.php');
+require_once('../../models/admin_db.php');
 require_once('../../models/client.php');
 require_once('../../models/client_db.php');
+require_once('../../models/company.php');
+require_once('../../models/company_db.php');
 require_once('../../models/address.php');
 require_once('../../models/address_db.php');
 
@@ -15,7 +19,7 @@ $action = filter_input(INPUT_POST, 'action');
 if ($action == NULL) {
     $action = filter_input(INPUT_GET, 'action');
     if ($action == NULL) {        
-        $action = 'view_login';
+        $action = 'view_clients';
         if (isset($_SESSION['cl_id'])) {
             $action = 'view_account';
         }
@@ -47,45 +51,23 @@ $fields->addField('add_zipCode');
 $fields->addField('cl_password');
 
 switch ($action) {
-    case 'view_login':      
-        // Clear login data
-        $cl_email = '';
-        $cl_password = '';
-        $cl_password_message = '';
-        
-        include 'client_login_register.php';
+    case 'view_clients':    
+        // Get all accounts and current admin from database
+        $clients = ClientDB::getAllClients();  
+        $companies = CompanyDB::getAllCompanies();
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+
+        include 'controllers/client/clients.php';
         break;
-    case 'login':
-        $cl_email = filter_input(INPUT_POST, 'cl_email');
-        $cl_password = filter_input(INPUT_POST, 'cl_password');
-        
-        // Validate user data
-        // $validate->password('cl_password', $cl_password);        
+    case 'select_client':
+        // Select the client
+        $_SESSION['cl_id'] = filter_input(INPUT_POST, 'cl_id');
+        $_SESSION['co_id'] = filter_input(INPUT_POST, 'co_id');
 
-        // If validation errors, redisplay Login page and exit controller
-        if ($fields->hasErrors()) {
-            include 'controllers/client/client_login_register.php';
-            break;
-        }
-        
-        // Check email and password in database
-        if (ClientDB::isValidClientLogin($cl_email, $cl_password)) {
-            $client = ClientDB::getClientByEmail($cl_email);
-            $_SESSION['cl_id'] = $client->getID();
-        } else {
-            $cl_password_message = 'Login failed. Invalid email or password.';
-            include 'controllers/client/client_login_register.php';
-            break;
-        }
-
-        // If necessary, redirect to the dashboard
-        // redirect('.');
-        include('client_view.php');
-    
+        header("Location: " .$app_path.'controllers/baseline?action=start_baseline');
         break;
     case 'view_account':
         $client = ClientDB::getClient($_SESSION['cl_id']);
-
         $address = AddressDB::getAddress($client->getClientAddress());
         
         include 'controllers/client/client_view.php';

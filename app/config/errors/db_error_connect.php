@@ -1,4 +1,4 @@
-<?php include '../../views/header.php'; ?>
+<?php include 'views/header.php'; ?>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-4">
@@ -14,4 +14,4 @@
         </div>
     </div>
 </div>
-<?php include '../../views/footer.php'; ?>
+<?php include 'views/footer.php'; ?>

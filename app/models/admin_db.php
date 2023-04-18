@@ -143,16 +143,16 @@ class AdminDB {
         $db = Database::getDB();
         $hash = password_hash($admin->getPassword(), PASSWORD_DEFAULT);
         $query = 'INSERT INTO admins 
-                      (adm_email, adm_password, adm_first, adm_last, adm_title)
+                      (adm_first, adm_last, adm_title, adm_email, adm_password)
                   VALUES 
-                      (:adm_email, :adm_password, :adm_first, :adm_last, :adm_title)';
+                      (:adm_first, :adm_last, :adm_title, :adm_email, :adm_password )';
         try {
             $statement = $db->prepare($query);
-            $statement->bindValue(':adm_email', $admin->getEmail());
-            $statement->bindValue(':adm_password', $hash);
             $statement->bindValue(':adm_first', $admin->getFirstName());
             $statement->bindValue(':adm_last', $admin->getLastName());
             $statement->bindValue(':adm_title', $admin->getTitle());
+            $statement->bindValue(':adm_email', $admin->getEmail());
+            $statement->bindValue(':adm_password', $hash);
             $statement->execute();
             
             $adm_id = $db->lastInsertId();
@@ -169,7 +169,7 @@ class AdminDB {
                   SET adm_first = :adm_first,
                       adm_last = :adm_last,
                       adm_title = :adm_title,
-                      adm_email = :adm_email,
+                      adm_email = :adm_email
                   WHERE adm_id = :adm_id';
         try {
             $statement = $db->prepare($query);
@@ -191,9 +191,7 @@ class AdminDB {
     public static function changePassword($admin) {
         $db = Database::getDB();
         $hash = password_hash($admin->getPassword(), PASSWORD_DEFAULT);
-        $query = 'UPDATE admins
-                  SET adm_password = :hash 
-                  WHERE adm_id = :adm_id';
+        $query = 'UPDATE admins SET adm_password = :hash WHERE adm_id = :adm_id';
         try {
             $statement = $db->prepare($query);
             $statement->bindValue(':hash', $hash);

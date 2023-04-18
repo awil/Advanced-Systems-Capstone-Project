@@ -10,9 +10,9 @@ class Client extends User {
         string $u_email = '',
         string $u_password = '',
         // Client properties
+        private int $co_id = 0,
         private string $cl_phone = '',
         private int $add_id = 0,
-        private int $co_id = 0,
     ) { 
         // Call User constructor
         parent::__construct($u_id, $u_first, $u_last, $u_title, $u_email, $u_password);
@@ -36,6 +36,29 @@ class Client extends User {
 
     public function getCompany() {
         return $this->co_id;
+    }
+
+    public function getCompanyName($id) {
+
+        $db = Database::getDB();
+        $query = 'SELECT co_name 
+                  FROM clients JOIN companies
+                  ON clients.co_id=companies.co_id
+                  WHERE clients.cl_id = :cl_id';
+        try {
+            $statement = $db->prepare($query);
+            $statement->bindValue(':cl_id', $id);
+            $statement->execute();
+            
+            $row = $statement->fetch();
+            $statement->closeCursor();
+            
+            $company = $row['co_name'];
+
+            return $company;
+        } catch (PDOException $e) {
+            displayDatabaseError($e->getMessage());
+        }
     }
 
     public function setCompany(int $value) {

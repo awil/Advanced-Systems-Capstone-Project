@@ -1,88 +1,85 @@
 <?php
-require_once('../libraries/util.php');
+require_once('../../config/util.php');
 
-require_once('../models/user.php');
-require_once('../models/admin.php');
-require_once('../models/admin_db.php');
-require_once('../models/client.php');
-require_once('../models/client_db.php');
-
-require_once('../models/fields.php');
-require_once('../models/validate.php');
+require_once('../../models/user.php');
+require_once('../../models/log.php');
+require_once('../../models/log_db.php');
+require_once('../../models/admin.php');
+require_once('../../models/admin_db.php');
+require_once('../../models/baseline_db.php');
+require_once('../../models/baseline.php');
+require_once('../../models/company.php');
+require_once('../../models/company_db.php');
+require_once('../../models/poam.php');
+require_once('../../models/ctrl.php');
+require_once('../../models/fields.php');
+require_once('../../models/validate.php');
 
 
 $action = filter_input(INPUT_POST, 'action');
-if ($action == NULL) {
+if ($action === NULL) {
     $action = filter_input(INPUT_GET, 'action');
-    if ($action == NULL) {        
-        $action = 'view_login';
-        if (isset($_SESSION['cl_id'])) {
-            header ('Location: ./client?action=view_account');
-        }
-        if (isset($_SESSION['adm_id'])) {
-            header ('Location: ./admin?action=view_account');
-        }
+    if ($action === NULL) {        
+        $action = 'view_dashboard';
     }
 }
 
-// Start field validation
-$validate = new Validate();
-$fields = $validate->getFields();
-
-// For the Login page
-$fields->addField('u_email', 'Must be valid email.');
-$fields->addField('u_password');
-
 switch ($action) {
-    case 'view_login':
-        // Clear login data
-        $u_email = '';
-        $u_password = '';
-        $u_password_msg = '';
+    case 'start_baseline':
+        $companies = CompanyDB::getAllCompanies();
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+        $current_client = CompanyDB::getCompany($_SESSION['co_id']);
         
-        include '../views/login.php';
+        include 'baseline_start.php';
         break;
-    case 'login':
-        // Get email/password
-        $u_email = filter_input(INPUT_POST, 'u_email');
-        $u_password = filter_input(INPUT_POST, 'u_password');
-        
-        // Validate user data       
-        $validate->text('u_email', $u_email);
-        $validate->text('u_password', $u_password, min:6);        
+    case 'create_baseline':
+        $companies = CompanyDB::getAllCompanies();
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+        $current_client = CompanyDB::getCompany($_SESSION['co_id']);
 
-        // If validation errors, redisplay Login page and exit controller
-        if ($fields->hasErrors()) {
-            include '../views/login.php';
-            break;
-        }
-        
-        // Check database - if valid email/password, log in
-        if (AdminDB::isValidAdminLogin($u_email, $u_password)) {
-            $admin = AdminDB::getAdminByEmail($u_email);
-            $_SESSION['adm_id'] = $admin->getID();
-        } else if (ClientDB::isValidClientLogin($u_email, $u_password)) {
-            $client = ClientDB::getClientByEmail($u_email);
-            $_SESSION['cl_id'] = $client->getID();
+        $baseline = new Baseline();
+        $baseline->setBaselineCOID(filter_input(INPUT_POST, 'co_id'));
+        $baseline->setBaselineSystem(filter_input(INPUT_POST, 'bl_system'));
+        $baseline->setImpactLvl(filter_input(INPUT_POST, 'bl_impact_lvl'));
+        $baseline->setStartDate(date("Y-m-d H:i:s"));
+        $baseline->setModDate(date("Y-m-d H:i:s"));
+        $baseline->setComments(filter_input(INPUT_POST, 'bl_comments'));
+
+        if (isset($_POST['hide_unselected'])) {
+            $hide = TRUE;
         } else {
-            $u_password_msg = 'Login failed. Invalid email or password.';
-            include '../views/login.php';
-            break;
+            $hide = FALSE;
         }
 
-        // Display Admin Menu page
-        include('account/account_view.php');
+        $baseline->setHidden($hide);
+        $bl_id = BaselineDB::addBaseline($baseline);
+        $baselines = BaselineDB::getAllBaselines($_SESSION['co_id']);
 
-        if (isset($_SESSION['adm_id'])) {
-            header ('Location: ./admin?action=view_account');
-            break;
-        } else if (isset($_SESSION['cl_id'])) {
-            header ('Location: ./client?action=view_account');
-            break;
-        } else {
-            include '../views/login.php';
-            break;
-        }
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setCompanyID($_SESSION['co_id']);
+        $l->setBaselineID($bl_id);
+        $l->setAccData($current_admin->getName().' created Baseline ID: '.$bl_id.' for '.$current_client->getName().'.');
+        LogDB::updateLog($l);
+
+        include 'baseline_view.php';
+        break;
+    case 'view_baselines':
+        $companies = CompanyDB::getAllCompanies();
+        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+        $current_client = CompanyDB::getCompany($_SESSION['co_id']);
+        $baselines = BaselineDB::getAllBaselines($_SESSION['co_id']);
+
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setCompanyID($_SESSION['co_id']);
+        $l->setAccData($current_admin->getName().' viewed baseline database.');
+        LogDB::updateLog($l);
+
+        include 'baseline_view.php';
+        break;
     case 'logout':
         $_SESSION = [];
         include('../index.php');

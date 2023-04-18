@@ -65,8 +65,8 @@ class ClientDB {
 
     public static function getClient(int $cl_id) {
         $db = Database::getDB();
-        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_password,
-                            co_id, cl_title, add_id
+        $query = 'SELECT cl_id, cl_first, cl_last, cl_title, cl_email, cl_password,
+                            co_id, cl_phone, add_id
                   FROM clients 
                   WHERE cl_id = :client_id';
         try {
@@ -87,9 +87,9 @@ class ClientDB {
     private static function loadClient($row) {
         if ($row) {
             return new Client($row['cl_id'], $row['cl_first'], 
-                                $row['cl_last'], $row['cl_email'],
-                                $row['cl_password'], $row['co_id'], 
-                                $row['cl_title'], $row['add_id'], );
+                                $row['cl_last'], $row['cl_title'], $row['cl_email'],
+                                $row['cl_password'], $row['co_id'], $row['cl_phone'],
+                                 $row['add_id'], );
         } else {
             return NULL;
         }
@@ -97,8 +97,8 @@ class ClientDB {
 
     public static function getClientByEmail(string $email) {
         $db = Database::getDB();
-        $query = 'SELECT cl_id, cl_first, cl_last, cl_email, cl_password,
-                            co_id, cl_title, add_id
+        $query = 'SELECT cl_id, cl_first, cl_last, cl_title, cl_email, cl_password,
+                            co_id, cl_phone, add_id
                   FROM clients 
                   WHERE cl_email = :client_email';
         try {
@@ -198,9 +198,10 @@ class ClientDB {
         $hash = password_hash($client->getPassword(), PASSWORD_DEFAULT);
         
         $query = 'INSERT INTO clients 
-                      (cl_email, cl_password, cl_first, cl_last, co_id, cl_title, cl_phone, add_id)
+                      (cl_id, cl_first, cl_last, cl_title, cl_email, cl_password,
+                            co_id, cl_phone, add_id)
                   VALUES 
-                      (:client_email, :client_password, :client_first, :client_last, :client_co, :client_title, :client_phone, :client_address)';
+                    (:client_first, :client_last, :client_title, :client_email, :client_password, :client_co, :client_phone, :client_address)';
         try {
             $statement = $db->prepare($query);
             $statement->bindValue(':client_email', $client->getEmail());

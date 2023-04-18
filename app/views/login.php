@@ -2,10 +2,10 @@
     include 'header.php'; 
     ?>
 
-<div class="container-md justify-content-between align-items-center py-3 my-4">
-    <div class="form-signin col-3 m-auto text-center">
+<div class="container-fluid justify-content-between align-items-center py-3 my-4">
+    <div class="form-signin col-md-8 col-lg-6 col-xl-4 m-auto text-center">
         <h1 class="h3 mb-3 fw-normal">Login</h1>
-            <form action="." method="post" id="login_form">
+            <form class="" action="." method="post" id="login_form">
                 <input type="hidden" name="action" value="login">
                 
                 <div class="form-floating mb-3">

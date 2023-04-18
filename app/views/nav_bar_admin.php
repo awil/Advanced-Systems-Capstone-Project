@@ -19,25 +19,22 @@
                         if (isset($_SESSION['adm_id'])) :
                     ?>
                     <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 pe-lg-2 active" href="<?php echo $app_path.'controllers/admin?view_dashboard' ?>">Home</a>
+                        <a class="nav-link py-2 px-0 px-lg-2 active" href="<?php echo $app_path.'controllers/admin?action=view_dashboard' ?>">Dashboard</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 px-lg-2" href="">Dashboard</a>
+                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'controllers/admin?action=view_account' ?>">My Profile</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $account_url ?>">My Profile</a>
+                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'controllers/client?action=view_clients'?>">Clients</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'baseline?action=view_clients'?>">Clients</a>
-                    </li>
-                    <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 px-lg-2" href="" >Start Baseline</a>
+                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'controllers/baseline?action=start_baseline'?>" >Start Baseline</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
                         <a class="nav-link py-2 px-0 px-lg-2" href="" >POAM</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 px-lg-2" href="" >Reports</a>
+                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'controllers/admin?action=view_log'?>" >Logs</a>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
                         <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $logout_url ?>" >Logout</a>
