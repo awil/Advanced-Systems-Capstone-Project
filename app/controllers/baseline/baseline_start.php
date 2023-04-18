@@ -21,9 +21,10 @@
             <div class="pl-lg-4">
                 <div class="row mb-4">
                     <div class="col-lg-6">
-                        <div class="form-group">
-                        <label class="form-control-label" for="co_id">Company</label>
+                        <div class="input-group mb-3">
+                        <label class="input-group-text" for="co_id">Company</label>
                         <select name="co_id" id="co_id" class="form-control form-control-alternative">
+                            <option value="">Choose...</option>
                             <?php foreach($companies as $company) : ?>
                                 <option value="<?php echo $company->getID(); ?>" 
                                 <?php if(isset($_SESSION['co_id']) && $company->getID() == $_SESSION['co_id']) {
@@ -35,9 +36,10 @@
                         </select>
                     </div>
                     <div class="col-lg-6">
-                        <div class="form-group">
-                        <label class="form-control-label" for="bl_system">Framework</label>
+                        <div class="input-group mb-3">
+                        <label class="input-group-text" for="bl_system">Framework</label>
                         <select name="bl_system" id="bl_system" class="form-control form-control-alternative">
+                            <option value="nist80053oscal">Choose...</option>
                             <option value="nist80053oscal">NIST SP 800-53</option>
                         </select>
                         </div>
@@ -45,9 +47,10 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-lg-6">
-                        <div class="form-group">
-                        <label class="form-control-label" for="bl_impact_lvl">Impact Level</label>
+                        <div class="input-group mb-1">
+                        <label class="input-group-text" for="bl_impact_lvl">Impact Level</label>
                         <select name="bl_impact_lvl" id="bl_impact_lvl" class="form-control form-control-alternative">
+                            <option value="low">Choose...</option>
                             <option value="low">Low</option>
                             <option value="mod">Moderate</option>
                             <option value="high">High</option>
@@ -57,23 +60,26 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-lg-6">
-                        <div class="form-group">
-                        <input type="checkbox" name="hide_unselected" class="form-check-input">
-                        <label class="form-check-label" for="hide_unselected">Hide Unselected Controls</label>
+                        <div class="input-group mb-1">
+                            <div class="input-group-text">
+                                <input type="checkbox" name="hide_unselected" class="form-check-input mt-0">
+                                
+                            </div>
+                            <label class="form-control" for="hide_unselected">Hide Unselected Controls</label>
                     </div>
                     </div>
                 </div>
                 <div class="row mb-4">
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                        <label class="form-control-label" for="bl_comments">Notes</label>
+                    <div class="">
+                        <div class="input-group mb-3">
+                        <label class="input-group-text" for="bl_comments">Notes (Optional)</label>
                         <input type="text" name="bl_comments" id="bl_comments" class="form-control form-control-alternative" value=""/>                        
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-4">
-                        <div class="form-group">
+                        <div class="input-group mb-3">
                         <input class="btn btn-sm btn-primary" type="submit" value="Create" />
                         </div>
                     </div>

@@ -2,15 +2,18 @@
 require_once('../../config/util.php');
 
 require_once('../../models/user.php');
+require_once('../../models/log.php');
+require_once('../../models/log_db.php');
 require_once('../../models/admin.php');
 require_once('../../models/admin_db.php');
 require_once('../../models/client.php');
 require_once('../../models/client_db.php');
+require_once('../../models/baseline.php');
+require_once('../../models/baseline_db.php');
 require_once('../../models/company.php');
 require_once('../../models/company_db.php');
-require_once('../../models/address.php');
-require_once('../../models/address_db.php');
-
+require_once('../../models/poam.php');
+require_once('../../models/ctrl.php');
 require_once('../../models/fields.php');
 require_once('../../models/validate.php');
 
@@ -50,12 +53,24 @@ $fields->addField('add_zipCode');
 // for the Login page
 $fields->addField('cl_password');
 
+if (isset($_SESSION['adm_id'])) {
+    $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+}
+if (isset($_SESSION['co_id'])) {
+    $current_client = CompanyDB::getCompany($_SESSION['co_id']);
+}
+
 switch ($action) {
     case 'view_clients':    
         // Get all accounts and current admin from database
         $clients = ClientDB::getAllClients();  
         $companies = CompanyDB::getAllCompanies();
-        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setAccData($current_admin->getName().' viewed client database');
+        LogDB::updateLog($l);
 
         include 'controllers/client/clients.php';
         break;
@@ -64,7 +79,7 @@ switch ($action) {
         $_SESSION['cl_id'] = filter_input(INPUT_POST, 'cl_id');
         $_SESSION['co_id'] = filter_input(INPUT_POST, 'co_id');
 
-        header("Location: " .$app_path.'controllers/baseline?action=start_baseline');
+        header("Location: " .$app_path.'controllers/baseline?action=view_co_baselines');
         break;
     case 'view_account':
         $client = ClientDB::getClient($_SESSION['cl_id']);
@@ -108,6 +123,13 @@ switch ($action) {
         if (!empty($client->getPassword())) {
             ClientDB::clientChangePassword($client);
         }
+
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setCompanyID($_SESSION['co_id']);
+        $l->setAccData($current_admin->getName().' updated '.$client->getName().'\'s account');
+        LogDB::updateLog($l);
 
         redirect('.');
         break;
@@ -158,6 +180,12 @@ switch ($action) {
         redirect('.');
         break;
     case 'logout':
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setAccData($current_admin->getName().' logged out');
+        LogDB::updateLog($l);
+
         $_SESSION = [];
         include('.');
         break;

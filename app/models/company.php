@@ -3,6 +3,7 @@ class Company {
     public function __construct(
         private int $co_id = 0,
         private string $co_name = '',
+        private string $co_short = '',
         private int $co_add_id = 0,
     ) { }
 
@@ -20,6 +21,14 @@ class Company {
 
     public function setName(string $value) {
         $this->co_name = $value;
+    }
+
+    public function getShort() {
+        return $this->co_short;
+    }
+
+    public function setShort(string $value) {
+        $this->co_short = $value;
     }
 
     public function getAddress() {

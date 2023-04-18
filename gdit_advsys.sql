@@ -30,6 +30,7 @@ CREATE TABLE admins (
 CREATE TABLE companies (
   co_id        INT            NOT NULL   AUTO_INCREMENT,
   co_name    varchar(255) NOT NULL,
+  co_short   varchar(50) NOT NULL,
   add_id int default null,
   co_disabled TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (co_id)
@@ -80,9 +81,9 @@ INSERT INTO admins (adm_id, adm_first, adm_last, adm_title, adm_email, adm_passw
 (6, 'Michael', 'Shamblin', 'Student', 'mshamblin254657@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a'),
 (7, 'Begona', 'Perez', 'Professor', 'perezmirab@nsula.edu', '$2y$10$XLpQeoTBXLRN4MjsS6bMwOXfE1A4fzjlqcJtUtoxubfNV8ed7cy9a');
 
-INSERT INTO companies (co_id, co_name, add_id, co_disabled) VALUES
-(1, 'Northwestern State University of Louisiana', 1, 0),
-(2, 'General Dynamics Information Technology', 2, 0);
+INSERT INTO companies (co_id, co_name, co_short, add_id, co_disabled) VALUES
+(1, 'Northwestern State University of Louisiana', 'NSULA', 1, 0),
+(2, 'General Dynamics Information Technology', 'GDIT', 2, 0);
 
 -- Populate clients
 INSERT INTO clients (cl_id, cl_first, cl_last, co_id, cl_title, cl_email, cl_password, cl_phone, add_id, cl_disabled) VALUES 
@@ -155,6 +156,7 @@ CREATE TABLE bl_controls (
   bl_id     INT NOT NULL,
   ctrl_id         VARCHAR(18),
   blc_stat        VARCHAR(15),
+  blc_poam        BOOLEAN,
   blc_created      DATETIME   NOT NULL,
   blc_modified     DATETIME   ,
   blc_comments   TEXT,

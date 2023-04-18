@@ -32,7 +32,7 @@ class LogDB {
 
     public static function getAccessLog() {
         $db = Database::getDB();
-        $q = 'SELECT * FROM access_log ORDER BY acc_date';
+        $q = 'SELECT * FROM access_log ORDER BY acc_date DESC LIMIT 20';
 
         try {
             $stmt = $db->prepare($q);
@@ -48,6 +48,46 @@ class LogDB {
         } catch (PDOException $e) {
             displayDatabaseError($e->getMessage());
         }
+    }
+
+    public static function getPageLog($page = 1, $limit = 25) {
+        $start = ($page - 1) * $limit;
+
+        $db = Database::getDB();
+        $q = 'SELECT * FROM access_log ORDER BY acc_date DESC LIMIT '.$start.', '.$limit;
+
+        try {
+            $stmt = $db->prepare($q);
+            $stmt->execute();
+            $rows = $stmt->fetchAll();
+            $stmt->closeCursor();
+
+            $logs = [];
+            foreach($rows as $row) {
+                $logs[] = self::loadLog($row);
+            }
+            return $logs;
+        } catch (PDOException $e) {
+            displayDatabaseError($e->getMessage());
+        }
+    }
+
+    public static function getTotalRows() {
+        $db = Database::getDB();
+        $q = 'SELECT COUNT(*) as total FROM access_log';
+
+        try {
+            $stmt = $db->prepare($q);
+            $stmt->execute();
+            $row = $stmt->fetch();
+            $stmt->closeCursor();
+
+            return $row['total'];
+        } catch (PDOException $e) {
+            displayDatabaseError($e->getMessage());
+        }
+
+        return 0;
     }
 
 }

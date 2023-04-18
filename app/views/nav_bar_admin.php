@@ -27,8 +27,15 @@
                     <li class="nav-item col-7 col-lg-auto">
                         <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'controllers/client?action=view_clients'?>">Clients</a>
                     </li>
-                    <li class="nav-item col-7 col-lg-auto">
-                        <a class="nav-link py-2 px-0 px-lg-2" href="<?php echo $app_path.'controllers/baseline?action=start_baseline'?>" >Start Baseline</a>
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Baselines</a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="<?php echo $app_path.'controllers/baseline?action=view_baselines'?>">View All</a></li>
+                        <?php if (isset($_SESSION['co_id'])) : ?>
+                            <li><a class="dropdown-item" href="<?php echo $app_path.'controllers/baseline?action=view_co_baselines'?>"><?php echo $current_client->getShort(); ?>'s Baselines</a></li>
+                        <?php endif; ?>
+                        <li><a class="dropdown-item" href="<?php echo $app_path.'controllers/baseline?action=start_baseline'?>">Create</a></li>
+                    </ul>
                     </li>
                     <li class="nav-item col-7 col-lg-auto">
                         <a class="nav-link py-2 px-0 px-lg-2" href="" >POAM</a>

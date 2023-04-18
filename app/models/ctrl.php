@@ -6,6 +6,7 @@ class Ctrl {
         private int $bl_id = 0,
         private string $ctrl_id = '',
         private string $blc_stat = '',
+        private bool $blc_poam = false,
         private string $blc_created = '',
         private string $blc_modified = '',
         private string $blc_comments = '',
@@ -41,6 +42,22 @@ class Ctrl {
 
     public function setStatus(string $value) {
         $this->blc_stat = $value;
+    }
+
+    public function hasPOAM() {
+        return $this->blc_poam;
+    }
+
+    public function poamStatus() {
+        if($this->blc_poam === FALSE) {
+            return 'N/A';
+        } else {
+            return 'Yes';
+        }
+    }
+
+    public function setPOAM(bool $value) {
+        $this->blc_poam = $value;
     }
 
     public function getStartDate() {

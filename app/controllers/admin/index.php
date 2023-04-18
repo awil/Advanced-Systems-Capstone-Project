@@ -8,6 +8,8 @@ require_once('../../models/log.php');
 require_once('../../models/log_db.php');
 require_once('../../models/client.php');
 require_once('../../models/client_db.php');
+require_once('../../models/company.php');
+require_once('../../models/company_db.php');
 require_once('../../models/fields.php');
 require_once('../../models/validate.php');
 
@@ -31,6 +33,14 @@ $fields->addField('adm_password_2');
 $fields->addField('adm_first');
 $fields->addField('adm_last');
 $fields->addField('adm_title');
+
+
+if (isset($_SESSION['adm_id'])) {
+    $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+}
+if (isset($_SESSION['co_id'])) {
+    $current_client = CompanyDB::getCompany($_SESSION['co_id']);
+}
 
 // For the Login page
 
@@ -82,21 +92,33 @@ switch ($action) {
         $admins = AdminDB::getAllAdmins();
         $clients = ClientDB::getAllClients();
         // var_dump($clients);
-        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+        // $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
 
         // View admin accounts
         include 'dashboard.php';
         break;
     case 'view_account':
         // Get all accounts and current admin from database
-        // var_dump($clients);
-        $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+        // $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+
         // View admin accounts
         include 'account/account_view.php';
         break;
     case 'view_log':
-        $logs = LogDB::getAccessLog();
         $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $limit = 25;
+
+        $logs = LogDB::getPageLog($page, $limit);
+        $tot_row = LogDB::getTotalRows();
+        $tot_pg = ceil($tot_row / $limit);
+
+        $l = new Log();
+        $l->setAdmID($_SESSION['adm_id']);
+        $l->setAccDate(date("Y-m-d H:i:s"));
+        $l->setAccData($current_admin->getName().' accessed the system log');
+        LogDB::updateLog($l);
 
         include 'access_log.php';
         break;
@@ -105,7 +127,7 @@ switch ($action) {
         $_SESSION['cl_id'] = filter_input(INPUT_POST, 'cl_id');
         $_SESSION['co_id'] = filter_input(INPUT_POST, 'co_id');
 
-        header("Location: " .$app_path.'controllers/baseline?action=start_baseline');
+        header("Location: " .$app_path.'controllers/baseline?action=view_co_baselines');
         break;
     case 'create':
         // Get admin user data
@@ -134,7 +156,7 @@ switch ($action) {
         // If validation errors, redisplay account page and exit controller
         if ($fields->hasErrors() || !empty($email_message)) {
             $admins = AdminDB::getAllAdmins();
-            $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
+            // $current_admin = AdminDB::getAdmin($_SESSION['adm_id']);
             include 'account/account_view.php';
             break;
         }
@@ -191,7 +213,7 @@ switch ($action) {
         $l = new Log();
         $l->setAdmID($_SESSION['adm_id']);
         $l->setAccDate(date("Y-m-d H:i:s"));
-        $l->setAccData($current_admin->getName().' updated UID: '.$admin->getID().' Name: '.$admin->getName().'.');
+        $l->setAccData($current_admin->getName().' updated UID: '.$admin->getID().' Name: '.$admin->getName());
         LogDB::updateLog($l);
 
         include('account/account_view.php');
@@ -200,7 +222,7 @@ switch ($action) {
         $l = new Log();
         $l->setAdmID($_SESSION['adm_id']);
         $l->setAccDate(date("Y-m-d H:i:s"));
-        $l->setAccData($current_admin->getName().' logged out.');
+        $l->setAccData($current_admin->getName().' logged out');
         LogDB::updateLog($l);
 
         unset($_SESSION['adm_id']);

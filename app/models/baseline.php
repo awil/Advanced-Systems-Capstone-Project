@@ -77,6 +77,24 @@ class Baseline {
         $this->bl_comments = $value;
     }
 
+    public function getShort() {
+        $db = Database::getDB();
+        $q = 'SELECT co_short FROM companies WHERE co_id = :co_id';
+        try {
+            $stmt = $db->prepare($q);
+            $stmt->bindValue(':co_id', $this->co_id);
+            $stmt->execute();
+            
+            $short = $stmt->fetch();
+            $stmt->closeCursor();
+
+            $short = $short['co_short'];
+            return $short;
+        } catch (PDOException $e) {
+            displayDatabaseError($e->getMessage());
+        }
+    }
+
     public function getHidden() {
         return $this->bl_hideselect;
     }
