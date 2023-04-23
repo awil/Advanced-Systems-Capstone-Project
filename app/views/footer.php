@@ -1,5 +1,10 @@
 </main>
-
+<?php
+                        /* Show menu items if user is logged in. */
+                        $account_url = $app_path.'controllers/?action=view_login';
+                        $about_url = $app_path.'controllers/?action=about';
+                        $logout_url = $app_path.'controllers/client?action=logout';
+                    ?>
 <!-- Footer - Begin -->
 <div class="container">
   <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
@@ -12,7 +17,7 @@
             </a>
 
     <ul class="nav col-md-4 justify-content-end">
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">About</a></li>
+      <li class="nav-item"><a href="<?php echo $about_url ?>" class="nav-link px-2 text-body-secondary">About</a></li>
     </ul>
   </footer>
 </div>

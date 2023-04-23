@@ -4,10 +4,10 @@
     // Get the application path
     $uri = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_STRING);
     $dirs = explode('/', $uri);
-    $app_path = '/' . $dirs[1] . '/' . $dirs[2] . '/';
+    $app_path = '/' . $dirs[1] . '/' . $dirs[2]. '/';
 
     set_include_path($doc_root . $app_path);
-
+    
     // Load helpers
     require_once('config.php');
     require_once('tag_format.php');
@@ -22,7 +22,7 @@
     // require_once('install.php');
     // install();
 
-    echo 'UTIL WAS RAN -> $app_path: '.$app_path.' $doc_root: '.$doc_root.' $uri: '.$uri;
+    echo 'UTIL WAS RAN -> $app_path: '.$app_path.' $doc_root: '.$doc_root.' $uri: '.$uri.' $inclpath '.get_include_path();
 
     // Error handling
     function display_error($error_message) {

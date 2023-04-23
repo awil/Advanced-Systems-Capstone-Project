@@ -4,7 +4,7 @@
 
     echo 'url_redirect.php -> page: '.$page;
 
-    header('location: '.URLROOT.'/'.$page);
+    header('location: '.$app_path.'/'.$page);
   }
 
 

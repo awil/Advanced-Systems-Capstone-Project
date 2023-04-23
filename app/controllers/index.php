@@ -83,6 +83,10 @@ switch ($action) {
             include '../views/login.php';
             break;
         }
+
+    case 'about':
+        include('../views/about.php');
+        break;
     case 'logout':
         $_SESSION = [];
         include('../index.php');
