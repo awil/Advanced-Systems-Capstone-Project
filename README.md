@@ -3,4 +3,4 @@ This application is designed and developed for the GRC team at General Dynamics 
 
 Demonstration video: https://vimeo.com/823536023/
 
-Link: http://teamnaranja.com/
+Link: http://team-naranja.com/
